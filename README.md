@@ -1,4 +1,4 @@
-#Workflow updater
+# Workflow updater
 
 A very simple action that replaces workflows in your repos based on a master repo.
 
