@@ -1,0 +1,29 @@
+name: Workflow Updater
+description: This action copies your workflows to all your repos.
+inputs:
+  github_token:
+    description: >
+      Token to use GitHub API. It must have "repo" and "workflow" scopes so it can push to repo and edit workflows.
+      It cannot be the default GitHub Actions token GITHUB_TOKEN. GitHub Action token's permissions are limited to the repository that contains your workflows.
+      Provide token of the user that has rights to push to the repos that this action is suppose to update. 
+    required: true
+  repos_to_update:
+    description: >
+      Comma-separated list of repositories that should get updates by this action.
+      In the format `repo1,repo2`.
+    required: true
+  workflows_to_update:
+    description: >
+      Comma-separated list of workflow files that will be copied to other repositories.
+      In the format `file.yml,another_file.yml`.
+    required: true
+  workflow_folder:
+    description: >
+      Folder where your workflows are located in this repo. 'workflow-updater' by default.
+    required: false
+runs:
+  using: node12
+  main: dist/index.js
+branding:
+  icon: compass
+  color: gray-dark
