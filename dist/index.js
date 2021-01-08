@@ -6074,17 +6074,12 @@ async function clone(remote, dir, git) {
 }
 
 async function push(token, url, branchName, message, committerUsername, committerEmail, git) {
-  const authenticatedUrl = (token, url, user) => {
-    const arr = url.split('//');
-    return `https://${user}:${token}@${arr[arr.length - 1]}`;
-  };
-
   return await git
     .add('./*')
     .addConfig('user.name', committerUsername)
     .addConfig('user.email', committerEmail)
     .commit(message)
-    .addRemote('auth', authenticatedUrl(token, url, committerUsername))
+    .addRemote('auth', url)
     .push(['-u', 'auth', branchName]);
 }
   
@@ -11852,8 +11847,6 @@ const { mkdir } = __webpack_require__(747).promises;
 const { clone, push } = __webpack_require__(374);
 const { copyChangedFiles, parseCommaList } = __webpack_require__(918);
 
-const eventPayload = require(process.env.GITHUB_EVENT_PATH);
-
 async function run() {
   if (process.env.GITHUB_EVENT_NAME !== 'push') return core.setFailed('This GitHub Action works only when triggered by "push" webhook.');
 
@@ -11862,6 +11855,7 @@ async function run() {
     const reposToUpdate = parseCommaList(core.getInput('repos_to_update', { required: true }));
     const workflows = parseCommaList(core.getInput('workflows_to_update', { required: true }));
     const workflowFolder = "workflow-updater" || false;
+    const githubUsername = core.getInput('github-username', { required: false })
     const defaultBranch = 'develop';
 
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
@@ -11874,18 +11868,18 @@ async function run() {
 
     for (const repo of reposToUpdate) {
       core.startGroup(`Started updating ${repo}`);
-      const dir = path.join(process.cwd(), './clones', repo);
-      const repoUrl = 'https://github.com/' + owner + '/' + repo;
+      const dir = __webpack_require__.ab + "clones/" + repo;
+      const repoUrl = `https://${githubUsername}:${gitHubKey}@github.com/${owner}/${repo}.git`;
       await mkdir(dir, {recursive: true});
 
       const git = simpleGit({baseDir: dir});
 
-      core.info(`Cloning ${repo}.`);
+      core.info(`Cloning ${repoUrl}.`);
       await clone(repoUrl, dir, git);
       core.info('Copying files...');
-      await copyChangedFiles(workflows, workflowFolder, dir);
+      await copyChangedFiles(workflows, workflowFolder, dir, '.github/workflows');
       core.info('Pushing changes to remote');
-      await push(gitHubKey, repoUrl, defaultBranch, 'Updating workflows', 'workflow-updater', '', git);
+      await push(gitHubKey, repoUrl, defaultBranch, 'Updating workflows', githubUsername, '', git);
       core.info('Workflow updater complete for ${owner}.');
       core.endGroup();
     }
@@ -12898,9 +12892,9 @@ module.exports = { copyChangedFiles, parseCommaList };
  * @param  {Array} filesList list of files that need to be copied
  * @param  {String} destination where file should be copied
  */
-async function copyChangedFiles(filesList, fileListFolder, destination) {
+async function copyChangedFiles(filesList, fileListFolder, destination, destinationFolder) {
   await Promise.all(filesList.map(async filepath => {
-    return await copy(path.join(process.cwd(), path.join(fileListFolder, filepath)), path.join(destination, filepath));
+    return await copy(path.join(process.cwd(), path.join(fileListFolder, filepath)), path.join(destination, path.join(destinationFolder,filepath)));
   }));
 }
 

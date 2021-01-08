@@ -17,6 +17,10 @@ inputs:
       Comma-separated list of workflow files that will be copied to other repositories.
       In the format `file.yml,another_file.yml`.
     required: true
+  github_username:
+    description: >
+      Username associated with github token.
+    required: true
   workflow_folder:
     description: >
       Folder where your workflows are located in this repo. 'workflow-updater' by default.

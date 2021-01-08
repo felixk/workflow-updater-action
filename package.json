@@ -1,6 +1,6 @@
 {
   "name": "workflow-updater-action",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "Simple action to automatically update workflows in a given list of repos.",
   "main": "lib/index.js",
   "scripts": {
@@ -40,6 +40,7 @@
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-sonarjs": "^0.5.0",
     "jest": "^26.4.1",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "rimraf": "^3.0.2"
   }
 }
