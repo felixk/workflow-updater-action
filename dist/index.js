@@ -11867,13 +11867,10 @@ async function run() {
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
     const octokit = github.getOctokit(gitHubKey);
 
-    core.startGroup(`Starting workflow update for ${owner}.`);
+    core.info(`Starting workflow update for ${owner}.`);
 
     if (!workflows.length) 
       return core.info('No workflow files found.');
-    
-    core.info(`Modified files that need replication are: ${modifiedFiles}.`);
-    core.endGroup();
 
     for (const repo of reposToUpdate) {
       core.startGroup(`Started updating ${repo}`);
@@ -11889,8 +11886,8 @@ async function run() {
       await copyChangedFiles(workflows, workflowFolder, dir);
       core.info('Pushing changes to remote');
       await push(gitHubKey, repoUrl, defaultBranch, 'Updating workflows', 'workflow-updater', '', git);
-      core.endGroup();
       core.info('Workflow updater complete for ${owner}.');
+      core.endGroup();
     }
   } catch (error) {
     core.setFailed(`Action failed: ${error}`);
