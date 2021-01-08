@@ -11862,6 +11862,7 @@ async function run() {
     const octokit = github.getOctokit(gitHubKey);
 
     core.info(`Starting workflow update for ${owner}.`);
+    core.info(`Updating workflows: ${JSON.stringify(workflows)}`);
 
     if (!workflows.length) 
       return core.info('No workflow files found.');
@@ -11880,7 +11881,7 @@ async function run() {
       await copyChangedFiles(workflows, workflowFolder, dir, '.github/workflows');
       core.info('Pushing changes to remote');
       await push(gitHubKey, repoUrl, defaultBranch, 'Updating workflows', githubUsername, '', git);
-      core.info('Workflow updater complete for ${owner}.');
+      core.info(`Workflow updater complete for ${owner}.`);
       core.endGroup();
     }
   } catch (error) {

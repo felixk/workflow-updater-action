@@ -1,6 +1,6 @@
 {
   "name": "workflow-updater-action",
-  "version": "2",
+  "version": "1.0.10",
   "description": "Simple action to automatically update workflows in a given list of repos.",
   "main": "lib/index.js",
   "scripts": {
