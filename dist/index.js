@@ -11855,7 +11855,7 @@ async function run() {
     const reposToUpdate = parseCommaList(core.getInput('repos_to_update', { required: true }));
     const workflows = parseCommaList(core.getInput('workflows_to_update', { required: true }));
     const workflowFolder = "workflow-updater" || false;
-    const githubUsername = core.getInput('github-username', { required: false })
+    const githubUsername = core.getInput('github_username', { required: false })
     const defaultBranch = 'develop';
 
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
@@ -11868,7 +11868,7 @@ async function run() {
 
     for (const repo of reposToUpdate) {
       core.startGroup(`Started updating ${repo}`);
-      const dir = __webpack_require__.ab + "clones/" + repo;
+      const dir = path.join(process.cwd(), './clones', repo);
       const repoUrl = `https://${githubUsername}:${gitHubKey}@github.com/${owner}/${repo}.git`;
       await mkdir(dir, {recursive: true});
 
